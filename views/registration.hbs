@@ -2,6 +2,8 @@
 
   {{{card}}}
 
+  {{> captcha captchaQuestion=captchaQuestion captchaToken=captchaToken}}
+
   {{> js_setup nodes=nodes}}
   {{#if extraPartial }}
     {{> (extraPartial) }}
