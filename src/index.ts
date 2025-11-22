@@ -16,7 +16,7 @@ import {
   registerHealthRoute,
   registerLoginRoute,
   registerRecoveryRoute,
-  registerRegistrationRoute,
+  registerRegistrationWithCaptchaRoute,
   registerSessionsRoute,
   registerSettingsRoute,
   registerStaticRoutes,
@@ -91,7 +91,7 @@ registerHealthRoute(router)
 registerCaptchaApiRoute(router)
 registerLoginRoute(router)
 registerRecoveryRoute(router)
-registerRegistrationRoute(router)
+registerRegistrationWithCaptchaRoute(router) // Use new registration with server-side captcha
 registerSettingsRoute(router)
 registerVerificationRoute(router)
 registerSessionsRoute(router)
