@@ -204,6 +204,14 @@ export const handleRegistrationWithCaptchaSubmit =
 
       // Check if Kratos response indicates success
       const flowData = response.data
+      const headers = response.headers
+
+      // CRITICAL: Forward session cookies from Kratos to the browser
+      // This is what actually logs the user in
+      if (headers["set-cookie"]) {
+        res.setHeader("set-cookie", headers["set-cookie"])
+        logger.debug("Session cookies set from Kratos response")
+      }
 
       // Check for continue_with actions or session
       if (flowData.session) {
