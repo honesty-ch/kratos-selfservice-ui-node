@@ -1,0 +1,93 @@
+{{#if captchaQuestion}}
+<!-- Captcha fields template - will be injected into form via JavaScript -->
+<div id="captcha-template" style="display: none;">
+  <div class="captcha-container">
+    <div class="captcha-box">
+      <label for="captcha_answer" class="captcha-label">
+        <strong>Security Check:</strong> What is {{captchaQuestion}}?
+      </label>
+      <input
+        type="number"
+        id="captcha_answer"
+        name="captcha_answer"
+        class="captcha-input"
+        required
+        placeholder="Enter your answer"
+        aria-label="Captcha answer"
+      />
+      <input type="hidden" name="captcha_token" value="{{captchaToken}}" />
+      <p class="captcha-help">Please solve this simple math problem to continue</p>
+
+      {{#if captchaError}}
+      <p id="captcha-error" class="captcha-error">{{captchaError}}</p>
+      {{/if}}
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  // Inject captcha fields INTO the form and override form action
+  (function() {
+    window.addEventListener('load', function() {
+      // Find the Kratos form
+      const form = document.querySelector('form[data-testid="registration-flow-form"], form[method="POST"]');
+
+      if (!form) {
+        console.error('Could not find registration form');
+        return;
+      }
+
+      // CRITICAL 1: Override the form action to point to our Express server
+      // Ory Elements sets the form action to Kratos API, but we need it to go through our server first
+      const originalAction = form.getAttribute('action');
+      console.log('Original form action (Kratos):', originalAction);
+
+      // Extract flow ID from the original Kratos action URL
+      const flowMatch = originalAction.match(/[?&]flow=([^&]+)/);
+      const flowId = flowMatch ? flowMatch[1] : new URLSearchParams(window.location.search).get('flow');
+
+      // Set action to our Express endpoint with flow ID
+      const newAction = flowId ? `/registration?flow=${flowId}` : '/registration';
+      form.setAttribute('action', newAction);
+      form.setAttribute('method', 'POST');
+      console.log('Updated form action to:', form.getAttribute('action'));
+
+      // CRITICAL 2: Move captcha fields INSIDE the form
+      const captchaTemplate = document.getElementById('captcha-template');
+      if (captchaTemplate) {
+        // Find the submit button to insert before it
+        const submitButton = form.querySelector('button[type="submit"], input[type="submit"]');
+
+        // Clone the captcha HTML and make it visible
+        const captchaHtml = captchaTemplate.innerHTML;
+        const captchaDiv = document.createElement('div');
+        captchaDiv.innerHTML = captchaHtml;
+
+        // Insert captcha fields into the form (before submit button)
+        if (submitButton) {
+          submitButton.parentNode.insertBefore(captchaDiv, submitButton);
+        } else {
+          form.appendChild(captchaDiv);
+        }
+
+        console.log('Captcha fields injected into form');
+
+        // Remove the template
+        captchaTemplate.remove();
+
+        // Set up error hiding when user types
+        const captchaAnswer = document.getElementById('captcha_answer');
+        const captchaError = document.getElementById('captcha-error');
+
+        if (captchaAnswer && captchaError) {
+          captchaAnswer.addEventListener('input', function() {
+            captchaError.style.display = 'none';
+          });
+        }
+      } else {
+        console.error('Captcha template not found');
+      }
+    });
+  })();
+</script>
+{{/if}}

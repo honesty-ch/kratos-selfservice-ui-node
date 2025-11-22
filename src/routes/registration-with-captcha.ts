@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /**
- * Registration route with server-side captcha validation
- * This is a complete copy of registration.ts that handles the entire flow
- * including captcha validation before forwarding to Kratos
+ * Registration route with server-side ONLY captcha validation
+ * No client-side validation - all validation happens in Express.js backend
  */
 
 import {
@@ -16,7 +15,6 @@ import {
   redirectOnSoftError,
   RouteCreator,
   RouteRegistrator,
-  validateCaptchaMiddleware,
   validateCaptcha,
   decryptCaptchaAnswer,
 } from "../pkg"
@@ -38,6 +36,7 @@ export const createRegistrationWithCaptchaRoute: RouteCreator =
       login_challenge,
       organization,
       identity_schema = "",
+      captcha_error,
     } = req.query
     const { frontend, kratosBrowserUrl, logoUrl, extraPartials } =
       createHelpers(req, res)
@@ -112,46 +111,61 @@ export const createRegistrationWithCaptchaRoute: RouteCreator =
           extraContext: res.locals.extraContext,
           captchaQuestion: res.locals.captchaQuestion,
           captchaToken: res.locals.captchaToken,
+          captchaError: captcha_error
+            ? decodeURIComponent(captcha_error.toString())
+            : undefined,
+          useBackendOnlyCaptcha: true, // Flag to use backend-only captcha partial
         })
       })
       .catch(redirectOnSoftError(res, next, initFlowUrl))
   }
 
-// POST handler - validates captcha and forwards to Kratos
+// POST handler - validates captcha server-side ONLY and forwards to Kratos
 export const handleRegistrationWithCaptchaSubmit =
   (createHelpers: any = defaultConfig) =>
   async (req: Request, res: Response, next: NextFunction) => {
-    const { captcha_answer, captcha_token, flow, ...kratosFields } = req.body
-    const { frontend, kratosBrowserUrl } = createHelpers(req, res)
+    logger.info("=== Registration POST handler called ===")
+    logger.info("Request body keys:", Object.keys(req.body))
+    logger.info("Full request body:", req.body)
+    logger.info("Query params:", req.query)
+
+    // Flow ID comes from query params, not body
+    const flow = (req.query.flow || req.body.flow) as string
+    const { captcha_answer, captcha_token, ...kratosFields } = req.body
+    const { frontend } = createHelpers(req, res)
 
     logger.debug("Registration with captcha POST handler", {
       hasFlow: !!flow,
       hasCaptcha: !!captcha_answer,
       hasCaptchaToken: !!captcha_token,
       method: req.body.method,
+      captcha_answer: captcha_answer,
+      flow: flow,
     })
 
-    // Validate captcha server-side
+    // Server-side ONLY captcha validation
     if (!captcha_token) {
       logger.warn("Captcha token missing in registration submission")
-      return res.status(400).render("error", {
-        error: {
-          message: "Captcha token is missing. Please try again.",
-          code: 400,
-        },
-      })
+      const errorMsg = encodeURIComponent(
+        "Captcha token is missing. Please try again.",
+      )
+      return res.redirect(
+        303,
+        `/registration?flow=${flow}&captcha_error=${errorMsg}`,
+      )
     }
 
     const decrypted = decryptCaptchaAnswer(captcha_token)
 
     if (!decrypted) {
       logger.warn("Invalid captcha token in registration submission")
-      return res.status(400).render("error", {
-        error: {
-          message: "Invalid captcha token. Please refresh and try again.",
-          code: 400,
-        },
-      })
+      const errorMsg = encodeURIComponent(
+        "Invalid captcha token. Please refresh and try again.",
+      )
+      return res.redirect(
+        303,
+        `/registration?flow=${flow}&captcha_error=${errorMsg}`,
+      )
     }
 
     const validation = validateCaptcha(
@@ -164,15 +178,16 @@ export const handleRegistrationWithCaptchaSubmit =
       logger.warn("Captcha validation failed during registration", {
         error: validation.error,
       })
-      return res.status(400).render("error", {
-        error: {
-          message: validation.error || "Captcha validation failed",
-          code: 400,
-        },
-      })
+      const errorMsg = encodeURIComponent(
+        validation.error || "Captcha validation failed",
+      )
+      return res.redirect(
+        303,
+        `/registration?flow=${flow}&captcha_error=${errorMsg}`,
+      )
     }
 
-    logger.info("Captcha validated successfully, forwarding to Kratos")
+    logger.info("Captcha validated successfully on backend, forwarding to Kratos")
 
     // Captcha is valid, forward the request to Kratos
     // Remove captcha fields from the body before sending to Kratos
@@ -253,10 +268,6 @@ export const registerRegistrationWithCaptchaRoute: RouteRegistrator = (
     createRegistrationWithCaptchaRoute(createHelpers),
   )
 
-  // POST - handle form submission with captcha validation
-  app.post(
-    "/registration",
-    validateCaptchaMiddleware,
-    handleRegistrationWithCaptchaSubmit(createHelpers),
-  )
+  // POST - handle form submission with server-side ONLY captcha validation
+  app.post("/registration", handleRegistrationWithCaptchaSubmit(createHelpers))
 }
