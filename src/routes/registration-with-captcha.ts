@@ -17,6 +17,7 @@ import {
   RouteRegistrator,
   validateCaptcha,
   decryptCaptchaAnswer,
+  getCaptchaImage,
 } from "../pkg"
 import { UserAuthCard } from "@ory/elements-markup"
 import { URLSearchParams } from "url"
@@ -111,6 +112,7 @@ export const createRegistrationWithCaptchaRoute: RouteCreator =
           extraContext: res.locals.extraContext,
           captchaQuestion: res.locals.captchaQuestion,
           captchaToken: res.locals.captchaToken,
+          captchaImageId: res.locals.captchaImageId,
           captchaError: captcha_error
             ? decodeURIComponent(captcha_error.toString())
             : undefined,
@@ -270,4 +272,21 @@ export const registerRegistrationWithCaptchaRoute: RouteRegistrator = (
 
   // POST - handle form submission with server-side ONLY captcha validation
   app.post("/registration", handleRegistrationWithCaptchaSubmit(createHelpers))
+
+  // GET - serve captcha image
+  app.get("/captcha/image/:imageId", (req: Request, res: Response) => {
+    const imageId = req.params.imageId
+    const imageBuffer = getCaptchaImage(imageId)
+
+    if (!imageBuffer) {
+      logger.warn("Captcha image not found", { imageId })
+      return res.status(404).send("Image not found")
+    }
+
+    res.setHeader("Content-Type", "image/png")
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate")
+    res.setHeader("Pragma", "no-cache")
+    res.setHeader("Expires", "0")
+    res.send(imageBuffer)
+  })
 }

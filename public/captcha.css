@@ -30,6 +30,31 @@
   font-weight: var(--ory-theme-font-weight-medium, 500);
 }
 
+.captcha-image {
+  display: block;
+  width: 200px;
+  height: 80px;
+  margin: 0.75rem 0;
+  border: 2px solid var(--ory-theme-border-def, #e0e0e0);
+  border-radius: var(--ory-theme-border-radius-forms, 0.5rem);
+  background-color: var(--ory-theme-background-canvas, #fcfcfc);
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.captcha-fallback {
+  font-family: var(--ory-theme-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-size: 1.25rem;
+  font-weight: var(--ory-theme-font-weight-medium, 500);
+  color: var(--ory-theme-foreground-def, #171717);
+  margin: 0.75rem 0;
+  padding: 1rem;
+  background-color: var(--ory-theme-background-canvas, #fcfcfc);
+  border: 1px solid var(--ory-theme-border-def, #e0e0e0);
+  border-radius: var(--ory-theme-border-radius-forms, 0.5rem);
+  text-align: center;
+}
+
 .captcha-input {
   width: 100%;
   max-width: 12rem;
@@ -132,6 +157,17 @@
   }
 
   .captcha-label strong {
+    color: var(--ory-theme-foreground-def, #fafafa);
+  }
+
+  .captcha-image {
+    border-color: var(--ory-theme-border-def, #3f3f46);
+    background-color: var(--ory-theme-background-canvas, #09090b);
+  }
+
+  .captcha-fallback {
+    background-color: var(--ory-theme-background-canvas, #09090b);
+    border-color: var(--ory-theme-border-def, #3f3f46);
     color: var(--ory-theme-foreground-def, #fafafa);
   }
 

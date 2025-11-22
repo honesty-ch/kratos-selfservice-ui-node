@@ -4,8 +4,18 @@
   <div class="captcha-container">
     <div class="captcha-box">
       <label for="captcha_answer" class="captcha-label">
-        <strong>Security Check:</strong> What is {{captchaQuestion}}?
+        <strong>Security Check:</strong> Solve the math problem shown in the image
       </label>
+      {{#if captchaImageId}}
+      <img
+        src="/captcha/image/{{captchaImageId}}"
+        alt="CAPTCHA challenge"
+        class="captcha-image"
+        id="captcha-image"
+      />
+      {{else}}
+      <p class="captcha-fallback">What is {{captchaQuestion}}?</p>
+      {{/if}}
       <input
         type="number"
         id="captcha_answer"
@@ -16,7 +26,7 @@
         aria-label="Captcha answer"
       />
       <input type="hidden" name="captcha_token" value="{{captchaToken}}" />
-      <p class="captcha-help">Please solve this simple math problem to continue</p>
+      <p class="captcha-help">Enter the result of the calculation shown above</p>
 
       {{#if captchaError}}
       <p id="captcha-error" class="captcha-error">{{captchaError}}</p>

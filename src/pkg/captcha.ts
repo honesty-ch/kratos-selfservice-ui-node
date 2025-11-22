@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Request, Response, NextFunction } from "express"
+import { createCanvas } from "canvas"
 import { logger } from "./logger"
 
 /**
@@ -13,6 +14,7 @@ export interface CaptchaChallenge {
   question: string
   answer: number
   timestamp: number
+  imageId?: string // ID to retrieve the generated image
 }
 
 /**
@@ -50,6 +52,116 @@ export function generateCaptcha(): CaptchaChallenge {
     answer,
     timestamp: Date.now(),
   }
+}
+
+/**
+ * Generates a CAPTCHA image with distorted text
+ * @param text - The math equation to render
+ * @returns Buffer containing PNG image data
+ */
+export function generateCaptchaImage(text: string): Buffer {
+  // Create canvas
+  const width = 200
+  const height = 80
+  const canvas = createCanvas(width, height)
+  const ctx = canvas.getContext("2d")
+
+  // Background with gradient
+  const gradient = ctx.createLinearGradient(0, 0, width, height)
+  gradient.addColorStop(0, "#f0f0f0")
+  gradient.addColorStop(1, "#e0e0e0")
+  ctx.fillStyle = gradient
+  ctx.fillRect(0, 0, width, height)
+
+  // Add noise lines
+  for (let i = 0; i < 5; i++) {
+    ctx.strokeStyle = `rgba(${Math.random() * 100}, ${Math.random() * 100}, ${Math.random() * 100}, 0.3)`
+    ctx.lineWidth = 1 + Math.random() * 2
+    ctx.beginPath()
+    ctx.moveTo(Math.random() * width, Math.random() * height)
+    ctx.lineTo(Math.random() * width, Math.random() * height)
+    ctx.stroke()
+  }
+
+  // Add noise dots
+  for (let i = 0; i < 50; i++) {
+    ctx.fillStyle = `rgba(${Math.random() * 150}, ${Math.random() * 150}, ${Math.random() * 150}, 0.4)`
+    ctx.beginPath()
+    ctx.arc(
+      Math.random() * width,
+      Math.random() * height,
+      Math.random() * 2,
+      0,
+      Math.PI * 2
+    )
+    ctx.fill()
+  }
+
+  // Draw distorted text
+  ctx.font = "bold 40px Arial"
+  ctx.textBaseline = "middle"
+
+  const chars = text.split("")
+  let x = 30
+
+  chars.forEach((char, i) => {
+    // Random rotation
+    const rotation = (Math.random() - 0.5) * 0.4
+    const y = height / 2 + (Math.random() - 0.5) * 10
+
+    ctx.save()
+    ctx.translate(x, y)
+    ctx.rotate(rotation)
+
+    // Random color for each character
+    const colors = ["#1a1a1a", "#2c3e50", "#34495e", "#16a085"]
+    ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)]
+
+    // Add shadow for depth
+    ctx.shadowColor = "rgba(0, 0, 0, 0.3)"
+    ctx.shadowBlur = 3
+    ctx.shadowOffsetX = 2
+    ctx.shadowOffsetY = 2
+
+    ctx.fillText(char, 0, 0)
+    ctx.restore()
+
+    // Spacing between characters
+    x += ctx.measureText(char).width + 5 + Math.random() * 10
+  })
+
+  // Add border
+  ctx.strokeStyle = "#999"
+  ctx.lineWidth = 2
+  ctx.strokeRect(1, 1, width - 2, height - 2)
+
+  return canvas.toBuffer("image/png")
+}
+
+// In-memory store for captcha images (temporary storage)
+// In production, consider using Redis or another cache
+const captchaImageStore = new Map<string, Buffer>()
+
+/**
+ * Stores a captcha image and returns its ID
+ */
+export function storeCaptchaImage(imageBuffer: Buffer): string {
+  const imageId = Math.random().toString(36).substring(2, 15)
+  captchaImageStore.set(imageId, imageBuffer)
+
+  // Auto-cleanup after 10 minutes
+  setTimeout(() => {
+    captchaImageStore.delete(imageId)
+  }, 10 * 60 * 1000)
+
+  return imageId
+}
+
+/**
+ * Retrieves a captcha image by ID
+ */
+export function getCaptchaImage(imageId: string): Buffer | undefined {
+  return captchaImageStore.get(imageId)
 }
 
 /**
@@ -127,12 +239,18 @@ export function generateCaptchaMiddleware(
     const captcha = generateCaptcha()
     const encrypted = encryptCaptchaAnswer(captcha.answer, captcha.timestamp)
 
+    // Generate captcha image
+    const imageBuffer = generateCaptchaImage(captcha.question)
+    const imageId = storeCaptchaImage(imageBuffer)
+
     // Store encrypted answer in locals for template rendering
     res.locals.captchaQuestion = captcha.question
     res.locals.captchaToken = encrypted
+    res.locals.captchaImageId = imageId
 
-    logger.debug("Generated captcha", {
+    logger.debug("Generated captcha with image", {
       question: captcha.question,
+      imageId: imageId,
       timestamp: captcha.timestamp,
     })
   }
