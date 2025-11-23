@@ -30,17 +30,41 @@
   font-weight: var(--ory-theme-font-weight-medium, 500);
 }
 
+.captcha-image-container {
+  position: relative;
+  display: inline-block;
+  margin: 0.75rem 0;
+}
+
 .captcha-image {
   display: block;
-  width: 200px;
+  width: 100%;
   height: 80px;
-  margin: 0.75rem 0;
   border: 2px solid var(--ory-theme-border-def, #e0e0e0);
   border-radius: var(--ory-theme-border-radius-forms, 0.5rem);
   background-color: var(--ory-theme-background-canvas, #fcfcfc);
   image-rendering: crisp-edges;
   image-rendering: -webkit-optimize-contrast;
 }
+
+.captcha-reload-button {
+  margin-top:1rem;
+  width: 100%;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 1rem;
+  line-height: 1.75rem;
+  box-sizing: border-box;
+  font-family: var(--ory-theme-font-family);
+  text-decoration: none;
+  color: var(--ory-theme-text-def);
+  background: var(--ory-theme-accent-def);
+  padding: .625rem 1rem;
+  border-radius: .25rem;
+  text-align: center;
+  cursor: pointer;
+}
+
 
 .captcha-fallback {
   font-family: var(--ory-theme-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
@@ -56,19 +80,26 @@
 }
 
 .captcha-input {
+  margin-top: 1rem;
   width: 100%;
-  max-width: 12rem;
-  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  line-height: 1.75rem;
   font-family: var(--ory-theme-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
-  font-size: var(--ory-theme-font-size-body, 0.875rem);
   font-weight: var(--ory-theme-font-weight-regular, 400);
-  line-height: var(--ory-theme-line-height-body, 1.5rem);
   color: var(--ory-theme-foreground-def, #171717);
   background-color: var(--ory-theme-background-canvas, #fcfcfc);
   border: 1px solid var(--ory-theme-border-def, #e0e0e0);
   border-radius: var(--ory-theme-border-radius-forms, 0.5rem);
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   outline: none;
+  box-sizing: border-box;
+  display: inline-flex;
+  color: var(--ory-theme-input-text);
+  border: 1px solid var(--ory-theme-border-def);
+  border-radius: .25rem;
+  padding: .75rem 1.5rem;
+  background: var(--ory-theme-input-background);
+  width: 100%;
 }
 
 .captcha-input:hover {
@@ -164,6 +195,8 @@
     border-color: var(--ory-theme-border-def, #3f3f46);
     background-color: var(--ory-theme-background-canvas, #09090b);
   }
+
+
 
   .captcha-fallback {
     background-color: var(--ory-theme-background-canvas, #09090b);

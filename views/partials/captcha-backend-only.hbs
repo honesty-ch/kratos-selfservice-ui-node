@@ -3,16 +3,26 @@
 <div id="captcha-template" style="display: none;">
   <div class="captcha-container">
     <div class="captcha-box">
-      {{#if captchaImageId}}
-      <img
-        src="/captcha/image/{{captchaImageId}}"
-        alt="CAPTCHA challenge"
-        class="captcha-image"
-        id="captcha-image"
-      />
-      {{else}}
-      <p class="captcha-fallback">What is {{captchaQuestion}}?</p>
-      {{/if}}
+      <div class="captcha-image-container">
+        {{#if captchaImageId}}
+        <img
+          src="/captcha/image/{{captchaImageId}}"
+          alt="CAPTCHA challenge"
+          class="captcha-image"
+          id="captcha-image"
+        />
+        {{else}}
+        <p class="captcha-fallback">What is {{captchaQuestion}}?</p>
+        {{/if}}
+        <button
+          type="button"
+          class="captcha-reload-button"
+          id="captcha-reload"
+          title="Reload CAPTCHA"
+          aria-label="Reload CAPTCHA"
+        >
+          &#x21bb;
+        </button>
       <input
         type="text"
         id="captcha_answer"
@@ -26,6 +36,7 @@
         pattern="[0-9\-]*"
       />
       <input type="hidden" name="captcha_token" value="{{captchaToken}}" />
+      </div>
 
       {{#if captchaError}}
       <p id="captcha-error" class="captcha-error">{{captchaError}}</p>
@@ -83,6 +94,15 @@
 
         // Remove the template
         captchaTemplate.remove();
+
+        // Set up reload button functionality
+        const reloadButton = document.getElementById('captcha-reload');
+        if (reloadButton) {
+          reloadButton.addEventListener('click', function() {
+            console.log('Reloading page to get new CAPTCHA');
+            window.location.reload();
+          });
+        }
 
         // Set up error hiding when user types
         const captchaAnswer = document.getElementById('captcha_answer');
