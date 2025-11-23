@@ -102,11 +102,11 @@
   font-size: var(--ory-theme-font-size-small, 0.75rem);
   line-height: var(--ory-theme-line-height-small, 1.25rem);
   font-weight: var(--ory-theme-font-weight-medium, 500);
-  color: var(--ory-theme-error-emphasis, #dc2626);
+  color: #ffffff;
   margin: 0.5rem 0 0 0;
   padding: 0.75rem 1rem;
-  background-color: var(--ory-theme-error-muted, #fef2f2);
-  border: 1px solid var(--ory-theme-error-subtle, #fecaca);
+  background-color: #dc2626;
+  border: 1px solid #b91c1c;
   border-radius: var(--ory-theme-border-radius-forms, 0.5rem);
   display: flex;
   align-items: center;
@@ -195,8 +195,8 @@
   }
 
   .captcha-error {
-    background-color: var(--ory-theme-error-muted, #7f1d1d);
-    border-color: var(--ory-theme-error-subtle, #991b1b);
-    color: var(--ory-theme-error-emphasis, #fca5a5);
+    background-color: #dc2626;
+    border-color: #b91c1c;
+    color: #ffffff;
   }
 }

@@ -3,9 +3,6 @@
 <div id="captcha-template" style="display: none;">
   <div class="captcha-container">
     <div class="captcha-box">
-      <label for="captcha_answer" class="captcha-label">
-        <strong>Security Check:</strong> Solve the math problem shown in the image
-      </label>
       {{#if captchaImageId}}
       <img
         src="/captcha/image/{{captchaImageId}}"
@@ -17,16 +14,18 @@
       <p class="captcha-fallback">What is {{captchaQuestion}}?</p>
       {{/if}}
       <input
-        type="number"
+        type="text"
         id="captcha_answer"
         name="captcha_answer"
         class="captcha-input"
         required
         placeholder="Enter your answer"
         aria-label="Captcha answer"
+        autocomplete="off"
+        inputmode="numeric"
+        pattern="[0-9\-]*"
       />
       <input type="hidden" name="captcha_token" value="{{captchaToken}}" />
-      <p class="captcha-help">Enter the result of the calculation shown above</p>
 
       {{#if captchaError}}
       <p id="captcha-error" class="captcha-error">{{captchaError}}</p>

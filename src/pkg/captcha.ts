@@ -66,69 +66,129 @@ export function generateCaptchaImage(text: string): Buffer {
   const canvas = createCanvas(width, height)
   const ctx = canvas.getContext("2d")
 
-  // Background with gradient
+  // Background with more varied gradient
   const gradient = ctx.createLinearGradient(0, 0, width, height)
-  gradient.addColorStop(0, "#f0f0f0")
-  gradient.addColorStop(1, "#e0e0e0")
+  const bgShade1 = 230 + Math.random() * 25
+  const bgShade2 = 210 + Math.random() * 25
+  gradient.addColorStop(0, `rgb(${bgShade1}, ${bgShade1}, ${bgShade1})`)
+  gradient.addColorStop(1, `rgb(${bgShade2}, ${bgShade2}, ${bgShade2})`)
   ctx.fillStyle = gradient
   ctx.fillRect(0, 0, width, height)
 
-  // Add noise lines
-  for (let i = 0; i < 5; i++) {
-    ctx.strokeStyle = `rgba(${Math.random() * 100}, ${Math.random() * 100}, ${Math.random() * 100}, 0.3)`
-    ctx.lineWidth = 1 + Math.random() * 2
+  // Add wavy/curved noise lines (more organic looking)
+  for (let i = 0; i < 3; i++) {
+    ctx.strokeStyle = `rgba(${Math.random() * 100}, ${Math.random() * 100}, ${Math.random() * 100}, 0.25)`
+    ctx.lineWidth = 1 + Math.random() * 2.5
     ctx.beginPath()
-    ctx.moveTo(Math.random() * width, Math.random() * height)
-    ctx.lineTo(Math.random() * width, Math.random() * height)
+
+    const startX = Math.random() * width
+    const startY = Math.random() * height
+    ctx.moveTo(startX, startY)
+
+    // Create bezier curves for wavy lines
+    for (let j = 0; j < 2; j++) {
+      const cp1x = Math.random() * width
+      const cp1y = Math.random() * height
+      const cp2x = Math.random() * width
+      const cp2y = Math.random() * height
+      const endX = Math.random() * width
+      const endY = Math.random() * height
+      ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, endX, endY)
+    }
     ctx.stroke()
   }
 
-  // Add noise dots
-  for (let i = 0; i < 50; i++) {
-    ctx.fillStyle = `rgba(${Math.random() * 150}, ${Math.random() * 150}, ${Math.random() * 150}, 0.4)`
+  // Add more varied noise dots with different sizes
+  for (let i = 0; i < 80; i++) {
+    const opacity = 0.15 + Math.random() * 0.3
+    ctx.fillStyle = `rgba(${Math.random() * 150}, ${Math.random() * 150}, ${Math.random() * 150}, ${opacity})`
     ctx.beginPath()
+    const size = 0.5 + Math.random() * 2.5
     ctx.arc(
       Math.random() * width,
       Math.random() * height,
-      Math.random() * 2,
+      size,
       0,
       Math.PI * 2
     )
     ctx.fill()
   }
 
-  // Draw distorted text
-  ctx.font = "bold 40px Arial"
+  // Draw distorted text with more variation
+  const fonts = ["Arial", "Helvetica", "Verdana", "Georgia"]
+  const baseSize = 38 + Math.random() * 6
   ctx.textBaseline = "middle"
 
   const chars = text.split("")
-  let x = 30
+  let x = 20 + Math.random() * 10
 
   chars.forEach((char, i) => {
-    // Random rotation
-    const rotation = (Math.random() - 0.5) * 0.4
-    const y = height / 2 + (Math.random() - 0.5) * 10
+    // More aggressive rotation and positioning
+    const rotation = (Math.random() - 0.5) * 0.6 // Increased rotation range
+    const yVariation = (Math.random() - 0.5) * 18 // More vertical movement
+    const y = height / 2 + yVariation
+
+    // Vary font size per character
+    const fontSize = baseSize + (Math.random() - 0.5) * 8
+    const font = fonts[Math.floor(Math.random() * fonts.length)]
+    ctx.font = `bold ${fontSize}px ${font}`
 
     ctx.save()
     ctx.translate(x, y)
     ctx.rotate(rotation)
 
-    // Random color for each character
-    const colors = ["#1a1a1a", "#2c3e50", "#34495e", "#16a085"]
+    // Apply random scaling/skewing for more distortion
+    const scaleX = 0.9 + Math.random() * 0.3
+    const scaleY = 0.85 + Math.random() * 0.35
+    const skewX = (Math.random() - 0.5) * 0.2
+    ctx.transform(scaleX, skewX, 0, scaleY, 0, 0)
+
+    // More varied colors including some blues and greens
+    const colors = [
+      "#1a1a1a", "#2c3e50", "#34495e", "#16a085",
+      "#27ae60", "#2980b9", "#8e44ad", "#c0392b"
+    ]
     ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)]
 
-    // Add shadow for depth
-    ctx.shadowColor = "rgba(0, 0, 0, 0.3)"
-    ctx.shadowBlur = 3
-    ctx.shadowOffsetX = 2
-    ctx.shadowOffsetY = 2
+    // Stronger shadow for more depth
+    ctx.shadowColor = "rgba(0, 0, 0, 0.4)"
+    ctx.shadowBlur = 2 + Math.random() * 3
+    ctx.shadowOffsetX = 1 + Math.random() * 2
+    ctx.shadowOffsetY = 1 + Math.random() * 2
 
+    // Draw the character
     ctx.fillText(char, 0, 0)
+
+    // Add outline/stroke to some characters for extra complexity
+    if (Math.random() > 0.5) {
+      ctx.strokeStyle = `rgba(0, 0, 0, ${0.1 + Math.random() * 0.2})`
+      ctx.lineWidth = 0.5
+      ctx.strokeText(char, 0, 0)
+    }
+
     ctx.restore()
 
-    // Spacing between characters
-    x += ctx.measureText(char).width + 5 + Math.random() * 10
+    // More varied spacing between characters
+    const charWidth = ctx.measureText(char).width
+    x += charWidth * scaleX + 3 + Math.random() * 12
   })
+
+  // Add some diagonal interference lines
+  for (let i = 0; i < 2; i++) {
+    ctx.strokeStyle = `rgba(${Math.random() * 80}, ${Math.random() * 80}, ${Math.random() * 80}, 0.15)`
+    ctx.lineWidth = 1 + Math.random() * 1.5
+    ctx.beginPath()
+    if (Math.random() > 0.5) {
+      // Horizontal-ish line
+      ctx.moveTo(0, Math.random() * height)
+      ctx.lineTo(width, Math.random() * height)
+    } else {
+      // Vertical-ish line
+      ctx.moveTo(Math.random() * width, 0)
+      ctx.lineTo(Math.random() * width, height)
+    }
+    ctx.stroke()
+  }
 
   // Add border
   ctx.strokeStyle = "#999"
