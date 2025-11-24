@@ -2,11 +2,7 @@
 
   {{{card}}}
 
-  {{#if useBackendOnlyCaptcha}}
-    {{> captcha-backend-only captchaQuestion=captchaQuestion captchaToken=captchaToken captchaImageId=captchaImageId captchaError=captchaError}}
-  {{else}}
-    {{> captcha captchaQuestion=captchaQuestion captchaToken=captchaToken}}
-  {{/if}}
+  {{> captcha-backend-only captchaQuestion=captchaQuestion captchaToken=captchaToken captchaImageId=captchaImageId captchaError=captchaError}}
 
   {{> js_setup nodes=nodes}}
   {{#if extraPartial }}

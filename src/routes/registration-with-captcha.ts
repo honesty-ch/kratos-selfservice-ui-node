@@ -116,7 +116,6 @@ export const createRegistrationWithCaptchaRoute: RouteCreator =
           captchaError: captcha_error
             ? decodeURIComponent(captcha_error.toString())
             : undefined,
-          useBackendOnlyCaptcha: true, // Flag to use backend-only captcha partial
         })
       })
       .catch(redirectOnSoftError(res, next, initFlowUrl))
