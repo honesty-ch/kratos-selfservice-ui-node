@@ -2,9 +2,14 @@ FROM node:18.12.1-alpine
 
 # Install Python3 and minimal build dependencies required for native Node modules
 # @napi-rs/canvas and sharp use pre-built binaries, so we don't need cairo/pango build deps
+# Install fonts for text rendering in captcha images
 RUN apk add --no-cache \
 	python3 \
-	build-base
+	build-base \
+	fontconfig \
+	ttf-dejavu \
+	font-noto \
+	font-noto-cjk
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
