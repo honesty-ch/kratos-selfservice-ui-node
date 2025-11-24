@@ -16,6 +16,7 @@ import { UnknownObject } from "express-handlebars/types"
 export * from "./logger"
 export * from "./middleware"
 export * from "./route"
+export * from "./captcha"
 
 export const removeTrailingSlash = (s: string) => s.replace(/\/$/, "")
 export const getUrlForFlow = (

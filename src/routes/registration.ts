@@ -2,13 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 import {
   defaultConfig,
+  generateCaptchaMiddleware,
   getUrlForFlow,
   isQuerySet,
   logger,
   redirectOnSoftError,
   RouteCreator,
   RouteRegistrator,
+  validateCaptchaMiddleware,
 } from "../pkg"
+import { registrationPostCaptchaHandler } from "./captcha"
 import { UserAuthCard } from "@ory/elements-markup"
 import { URLSearchParams } from "url"
 
@@ -96,6 +99,8 @@ export const createRegistrationRoute: RouteCreator =
           ),
           extraPartial: extraPartials?.registration,
           extraContext: res.locals.extraContext,
+          captchaQuestion: res.locals.captchaQuestion,
+          captchaToken: res.locals.captchaToken,
         })
       })
       .catch(redirectOnSoftError(res, next, initFlowUrl))
@@ -105,5 +110,15 @@ export const registerRegistrationRoute: RouteRegistrator = (
   app,
   createHelpers = defaultConfig,
 ) => {
-  app.get("/registration", createRegistrationRoute(createHelpers))
+  app.get(
+    "/registration",
+    generateCaptchaMiddleware,
+    createRegistrationRoute(createHelpers),
+  )
+  app.post(
+    "/registration",
+    validateCaptchaMiddleware,
+    registrationPostCaptchaHandler,
+    createRegistrationRoute(createHelpers),
+  )
 }

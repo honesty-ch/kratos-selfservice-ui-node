@@ -1,0 +1,137 @@
+{{#if captchaQuestion}}
+<div class="captcha-container">
+  <div class="captcha-box">
+    <label for="captcha_answer" class="captcha-label">
+      <strong>Security Check:</strong> What is {{captchaQuestion}}?
+    </label>
+    <input
+      type="number"
+      id="captcha_answer"
+      name="captcha_answer"
+      class="captcha-input"
+      required
+      placeholder="Enter your answer"
+      aria-label="Captcha answer"
+    />
+    <input type="hidden" name="captcha_token" value="{{captchaToken}}" />
+    <p class="captcha-help">Please solve this simple math problem to continue</p>
+    <p id="captcha-error" class="captcha-error" style="display: none;"></p>
+  </div>
+</div>
+
+<script type="text/javascript">
+  (function() {
+    // Wait for DOM to be ready
+    window.addEventListener('load', function() {
+      // Find the Kratos form (look for form with method POST)
+      const form = document.querySelector('form[method="post"], form[method="POST"]');
+
+      if (!form) {
+        console.warn('Registration form not found');
+        return;
+      }
+
+      let isSubmitting = false;
+      let captchaValidated = false;
+
+      // Intercept form submission
+      form.addEventListener('submit', async function(event) {
+        const captchaAnswer = document.getElementById('captcha_answer');
+        const captchaToken = document.querySelector('input[name="captcha_token"]');
+        const captchaError = document.getElementById('captcha-error');
+
+        // Check if captcha fields exist
+        if (!captchaAnswer || !captchaToken) {
+          console.warn('Captcha fields not found, allowing submission');
+          return;
+        }
+
+        // If we already validated the captcha, let the form submit
+        if (captchaValidated) {
+          return;
+        }
+
+        // Prevent the default submission until we validate
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+
+        // If already submitting, don't do it again
+        if (isSubmitting) {
+          return false;
+        }
+
+        // Validate captcha is filled
+        if (!captchaAnswer.value) {
+          captchaError.textContent = 'Please answer the security question';
+          captchaError.style.display = 'block';
+          captchaAnswer.focus();
+          return false;
+        }
+
+        // Mark as submitting
+        isSubmitting = true;
+        captchaError.style.display = 'none';
+
+        try {
+          // Validate captcha via API
+          const response = await fetch('/api/captcha/validate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              captcha_answer: captchaAnswer.value,
+              captcha_token: captchaToken.value
+            })
+          });
+
+          const result = await response.json();
+
+          if (!result.valid) {
+            // Captcha validation failed
+            captchaError.textContent = result.error || 'Captcha validation failed';
+            captchaError.style.display = 'block';
+            captchaAnswer.value = '';
+            captchaAnswer.focus();
+            isSubmitting = false;
+            return false;
+          }
+
+          // Captcha is valid, mark it and submit the form
+          captchaValidated = true;
+
+          // Submit the form programmatically
+          // Create a new submit event that won't be intercepted
+          const submitButton = form.querySelector('button[type="submit"], input[type="submit"]');
+          if (submitButton) {
+            submitButton.click();
+          } else {
+            form.submit();
+          }
+
+        } catch (error) {
+          console.error('Captcha validation error:', error);
+          captchaError.textContent = 'Failed to validate captcha. Please try again.';
+          captchaError.style.display = 'block';
+          isSubmitting = false;
+          return false;
+        }
+
+        return false;
+      }, true); // Use capture phase to intercept early
+
+      // Clear error when user types
+      const captchaAnswer = document.getElementById('captcha_answer');
+      if (captchaAnswer) {
+        captchaAnswer.addEventListener('input', function() {
+          const captchaError = document.getElementById('captcha-error');
+          if (captchaError) {
+            captchaError.style.display = 'none';
+          }
+        });
+      }
+    });
+  })();
+</script>
+{{/if}}

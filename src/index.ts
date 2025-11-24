@@ -10,12 +10,13 @@ import { logger, middleware as middlewareLogger } from "./pkg/logger"
 import {
   register404Route,
   register500Route,
+  registerCaptchaApiRoute,
   registerConsentRoute,
   registerErrorRoute,
   registerHealthRoute,
   registerLoginRoute,
   registerRecoveryRoute,
-  registerRegistrationRoute,
+  registerRegistrationWithCaptchaRoute,
   registerSessionsRoute,
   registerSettingsRoute,
   registerStaticRoutes,
@@ -71,6 +72,7 @@ app.use(cookieParser(process.env.COOKIE_SECRET || ""))
 app.use(addFavicon(defaultConfig))
 app.use(detectLanguage)
 app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json()) // Add JSON body parser for API endpoints
 app.set("view engine", "hbs")
 
 app.engine(
@@ -86,9 +88,10 @@ app.engine(
 
 registerStaticRoutes(router)
 registerHealthRoute(router)
+registerCaptchaApiRoute(router)
 registerLoginRoute(router)
 registerRecoveryRoute(router)
-registerRegistrationRoute(router)
+registerRegistrationWithCaptchaRoute(router) // Use new registration with server-side captcha
 registerSettingsRoute(router)
 registerVerificationRoute(router)
 registerSessionsRoute(router)

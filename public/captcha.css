@@ -1,0 +1,235 @@
+/* Captcha Styles - Matching Ory Elements Design */
+.captcha-container {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: var(--ory-theme-background-surface, #ffffff);
+  border: 1px solid var(--ory-theme-border-def, #e0e0e0);
+  border-radius: var(--ory-theme-border-radius-forms, 0.5rem);
+  box-shadow: var(--ory-theme-shadow-def, 0 1px 3px rgba(0, 0, 0, 0.1));
+}
+
+.captcha-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.captcha-label {
+  font-family: var(--ory-theme-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-size: var(--ory-theme-font-size-body, 0.875rem);
+  font-weight: var(--ory-theme-font-weight-regular, 400);
+  line-height: var(--ory-theme-line-height-body, 1.5rem);
+  color: var(--ory-theme-foreground-def, #171717);
+  margin: 0;
+  display: block;
+}
+
+.captcha-label strong {
+  color: var(--ory-theme-foreground-def, #171717);
+  font-weight: var(--ory-theme-font-weight-medium, 500);
+}
+
+.captcha-image-container {
+  position: relative;
+  display: inline-block;
+  margin: 0.75rem 0;
+}
+
+.captcha-image {
+  display: block;
+  width: 100%;
+  height: 80px;
+  border: 2px solid var(--ory-theme-border-def, #e0e0e0);
+  border-radius: var(--ory-theme-border-radius-forms, 0.5rem);
+  background-color: var(--ory-theme-background-canvas, #fcfcfc);
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.captcha-reload-button {
+  margin-top:1rem;
+  width: 100%;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 1rem;
+  line-height: 1.75rem;
+  box-sizing: border-box;
+  font-family: var(--ory-theme-font-family);
+  text-decoration: none;
+  color: var(--ory-theme-text-def);
+  background: var(--ory-theme-accent-def);
+  padding: .625rem 1rem;
+  border-radius: .25rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+
+.captcha-fallback {
+  font-family: var(--ory-theme-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-size: 1.25rem;
+  font-weight: var(--ory-theme-font-weight-medium, 500);
+  color: var(--ory-theme-foreground-def, #171717);
+  margin: 0.75rem 0;
+  padding: 1rem;
+  background-color: var(--ory-theme-background-canvas, #fcfcfc);
+  border: 1px solid var(--ory-theme-border-def, #e0e0e0);
+  border-radius: var(--ory-theme-border-radius-forms, 0.5rem);
+  text-align: center;
+}
+
+.captcha-input {
+  margin-top: 1rem;
+  width: 100%;
+  font-size: 1rem;
+  line-height: 1.75rem;
+  font-family: var(--ory-theme-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-weight: var(--ory-theme-font-weight-regular, 400);
+  color: var(--ory-theme-foreground-def, #171717);
+  background-color: var(--ory-theme-background-canvas, #fcfcfc);
+  border: 1px solid var(--ory-theme-border-def, #e0e0e0);
+  border-radius: var(--ory-theme-border-radius-forms, 0.5rem);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  outline: none;
+  box-sizing: border-box;
+  display: inline-flex;
+  color: var(--ory-theme-input-text);
+  border: 1px solid var(--ory-theme-border-def);
+  border-radius: .25rem;
+  padding: .75rem 1.5rem;
+  background: var(--ory-theme-input-background);
+  width: 100%;
+}
+
+.captcha-input:hover {
+  border-color: var(--ory-theme-border-dark, #bdbdbd);
+}
+
+.captcha-input:focus {
+  border-color: var(--ory-theme-accent-emphasis, #3b82f6);
+  box-shadow: 0 0 0 3px var(--ory-theme-accent-muted, rgba(59, 130, 246, 0.1));
+}
+
+.captcha-input:invalid {
+  border-color: var(--ory-theme-error-emphasis, #dc2626);
+}
+
+.captcha-input::placeholder {
+  color: var(--ory-theme-foreground-muted, #737373);
+  opacity: 1;
+}
+
+.captcha-help {
+  font-family: var(--ory-theme-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-size: var(--ory-theme-font-size-small, 0.75rem);
+  line-height: var(--ory-theme-line-height-small, 1.25rem);
+  color: var(--ory-theme-foreground-muted, #737373);
+  margin: 0;
+}
+
+.captcha-error {
+  font-family: var(--ory-theme-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-size: var(--ory-theme-font-size-small, 0.75rem);
+  line-height: var(--ory-theme-line-height-small, 1.25rem);
+  font-weight: var(--ory-theme-font-weight-medium, 500);
+  color: #ffffff;
+  margin: 0.5rem 0 0 0;
+  padding: 0.75rem 1rem;
+  background-color: #dc2626;
+  border: 1px solid #b91c1c;
+  border-radius: var(--ory-theme-border-radius-forms, 0.5rem);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.captcha-error::before {
+  content: "⚠";
+  font-size: 1rem;
+  line-height: 1;
+}
+
+@media (max-width: 48em) {
+  .captcha-container {
+    padding: 0.75rem;
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .captcha-input {
+    max-width: 100%;
+  }
+}
+
+/* Responsive spacing adjustments */
+@media (max-width: 24.375em) {
+  .captcha-container {
+    padding: 0.5rem;
+  }
+
+  .captcha-box {
+    gap: 0.5rem;
+  }
+}
+
+/*
+ * Dark mode support using Ory theme variables
+ * These will automatically adapt if Ory Elements is configured with dark theme
+ */
+@media (prefers-color-scheme: dark) {
+  .captcha-container {
+    background-color: var(--ory-theme-background-surface, #18181b);
+    border-color: var(--ory-theme-border-def, #3f3f46);
+  }
+
+  .captcha-label {
+    color: var(--ory-theme-foreground-def, #fafafa);
+  }
+
+  .captcha-label strong {
+    color: var(--ory-theme-foreground-def, #fafafa);
+  }
+
+  .captcha-image {
+    border-color: var(--ory-theme-border-def, #3f3f46);
+    background-color: var(--ory-theme-background-canvas, #09090b);
+  }
+
+
+
+  .captcha-fallback {
+    background-color: var(--ory-theme-background-canvas, #09090b);
+    border-color: var(--ory-theme-border-def, #3f3f46);
+    color: var(--ory-theme-foreground-def, #fafafa);
+  }
+
+  .captcha-input {
+    background-color: var(--ory-theme-background-canvas, #09090b);
+    color: var(--ory-theme-foreground-def, #fafafa);
+    border-color: var(--ory-theme-border-def, #3f3f46);
+  }
+
+  .captcha-input:hover {
+    border-color: var(--ory-theme-border-dark, #52525b);
+  }
+
+  .captcha-input:focus {
+    border-color: var(--ory-theme-accent-emphasis, #60a5fa);
+    box-shadow: 0 0 0 3px var(--ory-theme-accent-muted, rgba(96, 165, 250, 0.2));
+  }
+
+  .captcha-input::placeholder {
+    color: var(--ory-theme-foreground-muted, #a1a1aa);
+  }
+
+  .captcha-help {
+    color: var(--ory-theme-foreground-muted, #a1a1aa);
+  }
+
+  .captcha-error {
+    background-color: #dc2626;
+    border-color: #b91c1c;
+    color: #ffffff;
+  }
+}

@@ -2,6 +2,8 @@
 
   {{{card}}}
 
+  {{> captcha-backend-only captchaQuestion=captchaQuestion captchaToken=captchaToken captchaImageId=captchaImageId captchaError=captchaError}}
+
   {{> js_setup nodes=nodes}}
   {{#if extraPartial }}
     {{> (extraPartial) }}
