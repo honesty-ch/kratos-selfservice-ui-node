@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /**
- * Registration route with server-side ONLY captcha validation
- * No client-side validation - all validation happens in Express.js backend
+ * Registration route with captcha data forwarding
+ * Captcha validation happens in the webhook endpoint
  */
 
 import {
@@ -15,8 +15,6 @@ import {
   redirectOnSoftError,
   RouteCreator,
   RouteRegistrator,
-  validateCaptcha,
-  decryptCaptchaAnswer,
   getCaptchaImage,
 } from "../pkg"
 import { UserAuthCard } from "@ory/elements-markup"
@@ -144,51 +142,7 @@ export const handleRegistrationWithCaptchaSubmit =
       flow: flow,
     })
 
-    // Server-side ONLY captcha validation
-    if (!captcha_token) {
-      logger.warn("Captcha token missing in registration submission")
-      const errorMsg = encodeURIComponent(
-        "Captcha token is missing. Please try again.",
-      )
-      return res.redirect(
-        303,
-        `/registration?flow=${flow}&captcha_error=${errorMsg}`,
-      )
-    }
-
-    const decrypted = decryptCaptchaAnswer(captcha_token)
-
-    if (!decrypted) {
-      logger.warn("Invalid captcha token in registration submission")
-      const errorMsg = encodeURIComponent(
-        "Invalid captcha token. Please refresh and try again.",
-      )
-      return res.redirect(
-        303,
-        `/registration?flow=${flow}&captcha_error=${errorMsg}`,
-      )
-    }
-
-    const validation = validateCaptcha(
-      captcha_answer,
-      decrypted.answer,
-      decrypted.timestamp,
-    )
-
-    if (!validation.valid) {
-      logger.warn("Captcha validation failed during registration", {
-        error: validation.error,
-      })
-      const errorMsg = encodeURIComponent(
-        validation.error || "Captcha validation failed",
-      )
-      return res.redirect(
-        303,
-        `/registration?flow=${flow}&captcha_error=${errorMsg}`,
-      )
-    }
-
-    logger.info("Captcha validated successfully on backend, forwarding to Kratos")
+    logger.info("Forwarding registration to Kratos with captcha data in transient_payload")
 
     // Captcha is valid, forward the request to Kratos
     // Include captcha information in transient_payload for webhook access
