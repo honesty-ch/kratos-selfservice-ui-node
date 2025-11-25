@@ -7,7 +7,7 @@ import {
   setSession,
 } from "../pkg"
 import { navigationMenu } from "../pkg/ui"
-import { CardGradient, Typography } from "@ory/elements-markup"
+import { CardGradient, CodeBox, Typography } from "@ory/elements-markup"
 
 export const createWelcomeRoute: RouteCreator =
   (createHelpers) => async (req, res) => {
@@ -28,8 +28,72 @@ export const createWelcomeRoute: RouteCreator =
           .catch(() => ({ data: { logout_url: "" } }))
       ).data.logout_url || ""
 
+    let concepts = ""
+    if (!Boolean(session)) {
+      // not logged
+      concepts = [
+        CardGradient({
+          heading: "Login",
+          content:
+            "Jump start your project and complete the quickstart tutorial to get a broader overview of Ory Network.",
+          action: "/login",
+          target: "_blank",
+        }),
+        CardGradient({
+          heading: "Subscribe",
+          content:
+            "Jump start your project and complete the quickstart tutorial to get a broader overview of Ory Network.",
+          action: "/registration",
+          target: "_blank",
+        }),
+      ].join("\n")
+    } else {
+      // logged but email not verified
+      if (
+        session?.identity?.verifiable_addresses?.length &&
+        session?.identity?.verifiable_addresses?.length > 0 &&
+        session?.identity?.verifiable_addresses.find((v) => v.verified)
+      ) {
+        // a verified email exists
+        concepts = [
+          CardGradient({
+            heading: "Logout",
+            content:
+              "Jump start your project and complete the quickstart tutorial to get a broader overview of Ory Network.",
+            action: logoutUrl,
+            target: "_blank",
+          }),
+          CardGradient({
+            heading: "Settings",
+            content:
+              "Jump start your project and complete the quickstart tutorial to get a broader overview of Ory Network.",
+            action: "/settings",
+            target: "_blank",
+          }),
+        ].join("\n")
+      } else {
+        // logged with unverified email
+        concepts = [
+          CardGradient({
+            heading: "Logout",
+            content:
+              "Jump start your project and complete the quickstart tutorial to get a broader overview of Ory Network.",
+            action: logoutUrl,
+            target: "_blank",
+          }),
+          CardGradient({
+            heading: "Verify",
+            content:
+              "Jump start your project and complete the quickstart tutorial to get a broader overview of Ory Network.",
+            action: "/verification",
+            target: "_blank",
+          }),
+        ].join("\n")
+      }
+    }
+
     res.render("welcome", {
-      layout: "welcome",
+      /*layout: "welcome",
       nav: navigationMenu({
         navTitle: res.locals.projectName,
         session,
@@ -44,46 +108,11 @@ export const createWelcomeRoute: RouteCreator =
         size: "small",
         color: "foregroundMuted",
       }),
-      concepts: [
-        CardGradient({
-          heading: "Getting Started",
-          content:
-            "Jump start your project and complete the quickstart tutorial to get a broader overview of Ory Network.",
-          action:
-            "https://www.ory.sh/docs/getting-started/integrate-auth/expressjs",
-          target: "_blank",
-        }),
-        CardGradient({
-          heading: "User flows",
-          content:
-            "Implement flows that users perform themselves as opposed to administrative intervention.",
-          action: "https://www.ory.sh/docs/kratos/self-service",
-          target: "_blank",
-        }),
-        CardGradient({
-          heading: "Identities 101",
-          content:
-            "Every identity can have its own model - get to know the ins and outs of Identity Schemas.",
-          action:
-            "https://www.ory.sh/docs/kratos/manage-identities/identity-schema",
-          target: "_blank",
-        }),
-        CardGradient({
-          heading: "Sessions",
-          content:
-            "Ory Network manages sessions for you - get to know how sessions work.",
-          action: "https://www.ory.sh/docs/kratos/session-management/overview",
-          target: "_blank",
-        }),
-        CardGradient({
-          heading: "Custom UI",
-          content:
-            "Implementing these pages in your language and framework of choice is straightforward using our SDKs.",
-          action:
-            "https://www.ory.sh/docs/kratos/bring-your-own-ui/configure-ory-to-use-your-ui",
-          target: "_blank",
-        }),
-      ].join("\n"),
+      session: CodeBox({
+        className: "session-code-box",
+        children: JSON.stringify(session, null, 2),
+      }),*/
+      concepts: concepts,
     })
   }
 
