@@ -20,6 +20,7 @@ import {
   registerSettingsRoute,
   registerStaticRoutes,
   registerVerificationRoute,
+  registerWelcomeRoute,
   registerLogoutRoute,
 } from "./routes"
 import { csrfErrorHandler } from "./routes/csrfError"
@@ -92,6 +93,7 @@ registerRecoveryRoute(router)
 registerRegistrationWithCaptchaRoute(router) // Use new registration with server-side captcha
 registerSettingsRoute(router)
 registerVerificationRoute(router)
+registerWelcomeRoute(router)
 registerErrorRoute(router)
 
 // all routes registered under the /consent path are protected by CSRF
@@ -105,7 +107,7 @@ router.use("/logout", csrfErrorHandler(invalidCsrfTokenError))
 registerLogoutRoute(router)
 
 router.get("/", (req: Request, res: Response) => {
-  res.redirect(303, "login")
+  res.redirect(303, "welcome")
 })
 
 register404Route(router)
