@@ -11,6 +11,7 @@ import {
   register404Route,
   register500Route,
   registerCaptchaApiRoute,
+  registerCaptchaValidateRoute,
   registerConsentRoute,
   registerErrorRoute,
   registerHealthRoute,
@@ -89,6 +90,7 @@ app.engine(
 registerStaticRoutes(router)
 registerHealthRoute(router)
 registerCaptchaApiRoute(router)
+registerCaptchaValidateRoute(router)
 registerWebhooksRoute(router)
 registerLoginRoute(router)
 registerRecoveryRoute(router)
