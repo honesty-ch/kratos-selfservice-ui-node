@@ -23,3 +23,9 @@ create a new docker
 # kratos self service
 docker build . -t "kratosss:latest"
 ```
+
+## URL
+
+- http://localhost:3000/login
+- http://localhost:3000/settings
+- http://localhost:3000/logout
