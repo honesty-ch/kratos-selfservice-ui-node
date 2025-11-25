@@ -191,8 +191,16 @@ export const handleRegistrationWithCaptchaSubmit =
     logger.info("Captcha validated successfully on backend, forwarding to Kratos")
 
     // Captcha is valid, forward the request to Kratos
-    // Remove captcha fields from the body before sending to Kratos
-    const kratosBody = { ...kratosFields }
+    // Include captcha information in transient_payload for webhook access
+    const kratosBody = {
+      ...kratosFields,
+      transient_payload: {
+        captcha_answer: captcha_answer,
+        captcha_token: captcha_token,
+        captcha_validated: true,
+        captcha_validated_at: new Date().toISOString(),
+      },
+    }
 
     try {
       const response = await frontend.updateRegistrationFlow({

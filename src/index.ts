@@ -22,6 +22,7 @@ import {
   registerVerificationRoute,
   registerWelcomeRoute,
   registerLogoutRoute,
+  registerWebhooksRoute,
 } from "./routes"
 import { csrfErrorHandler } from "./routes/csrfError"
 import bodyParser from "body-parser"
@@ -88,6 +89,7 @@ app.engine(
 registerStaticRoutes(router)
 registerHealthRoute(router)
 registerCaptchaApiRoute(router)
+registerWebhooksRoute(router)
 registerLoginRoute(router)
 registerRecoveryRoute(router)
 registerRegistrationWithCaptchaRoute(router) // Use new registration with server-side captcha
