@@ -34,9 +34,20 @@ export const registerWebhooksRoute: RouteRegistrator = (app) => {
 
         if (!decrypted) {
           logger.error("Webhook: Invalid captcha token")
+          // Return Kratos-compatible error format
           return res.status(400).json({
-            success: false,
-            error: "Invalid captcha token",
+            messages: [
+              {
+                instance_ptr: "#/captcha_answer",
+                messages: [
+                  {
+                    id: 4000001,
+                    text: "Invalid captcha token",
+                    type: "error",
+                  },
+                ],
+              },
+            ],
           })
         }
 
@@ -48,9 +59,20 @@ export const registerWebhooksRoute: RouteRegistrator = (app) => {
 
         if (!validation.valid) {
           logger.error("Webhook: Captcha validation failed", { error: validation.error })
+          // Return Kratos-compatible error format
           return res.status(400).json({
-            success: false,
-            error: validation.error || "Captcha validation failed",
+            messages: [
+              {
+                instance_ptr: "#/captcha_answer",
+                messages: [
+                  {
+                    id: 4000002,
+                    text: validation.error || "Captcha validation failed",
+                    type: "error",
+                  },
+                ],
+              },
+            ],
           })
         }
 
@@ -65,9 +87,7 @@ export const registerWebhooksRoute: RouteRegistrator = (app) => {
     }*/
 
     // Captcha is valid - allow registration to proceed
-    res.status(200).json({
-      success: true,
-      message: "Before registration webhook received and captcha validated",
-    })
+    // Return empty response for success (Kratos doesn't need a body for 200 OK)
+    res.status(200).send()
   })
 }
