@@ -199,11 +199,13 @@ export const handleRegistrationWithCaptchaSubmit =
       logger.error("Error forwarding registration to Kratos", {
         status: axiosError.response?.status,
         data: axiosError.response?.data,
+        responseBody: axiosError.response?.data,
       })
 
       // Handle Kratos errors
       if (axiosError.response) {
         const status = axiosError.response.status
+        const responseData = axiosError.response.data as any
 
         // Flow expired or not found
         if (status === 404 || status === 410 || status === 403) {
@@ -211,10 +213,80 @@ export const handleRegistrationWithCaptchaSubmit =
           return res.redirect(303, "/registration")
         }
 
-        // Validation errors from Kratos
+        // Validation errors from Kratos (including webhook failures)
         if (status === 400) {
-          logger.debug("Kratos validation error, redirecting back to form")
-          return res.redirect(303, `/registration?flow=${flow}`)
+          logger.debug("Kratos validation error, checking for webhook error", {
+            responseData: JSON.stringify(responseData, null, 2)
+          })
+
+          // Extract error messages
+          const messages = responseData?.ui?.messages || []
+          const webhookError = messages.find((msg: any) =>
+            msg.text?.toLowerCase().includes("captcha") ||
+            msg.type === "error"
+          )
+
+          if (webhookError || responseData?.ui) {
+            // We have validation error with flow data - render the form with pre-filled data
+            logger.warn("Webhook validation failed, re-rendering form with errors")
+
+            const { kratosBrowserUrl, logoUrl, extraPartials } = createHelpers(req, res)
+
+            // Generate new captcha for retry
+            const captcha = require('../pkg/captcha').generateCaptcha()
+            const encrypted = require('../pkg/captcha').encryptCaptchaAnswer(captcha.answer, captcha.timestamp)
+            const imageBuffer = require('../pkg/captcha').generateCaptchaImage(captcha.question)
+            const imageId = require('../pkg/captcha').storeCaptchaImage(imageBuffer)
+
+            const errorText = webhookError?.text ||
+                             responseData?.error?.message ||
+                             responseData?.message ||
+                             "Validation failed. Please try again."
+
+            // Filter out captcha fields from nodes (they're not part of the identity schema)
+            const filteredNodes = responseData.ui.nodes.filter((node: any) => {
+              const nodeName = node.attributes?.name
+              return nodeName !== 'captcha_answer' && nodeName !== 'captcha_token'
+            })
+
+            // Create a cleaned flow object without captcha fields
+            const cleanedFlow = {
+              ...responseData,
+              ui: {
+                ...responseData.ui,
+                nodes: filteredNodes,
+              },
+            }
+
+            return res.render("registration", {
+              nodes: filteredNodes,
+              card: UserAuthCard(
+                {
+                  flow: cleanedFlow,
+                  flowType: "registration",
+                  cardImage: logoUrl,
+                  additionalProps: {
+                    loginURL: getUrlForFlow(
+                      kratosBrowserUrl,
+                      "login",
+                      new URLSearchParams(),
+                    ),
+                  },
+                },
+                { locale: res.locals.lang },
+              ),
+              extraPartial: extraPartials?.registration,
+              extraContext: res.locals.extraContext,
+              captchaQuestion: captcha.question,
+              captchaToken: encrypted,
+              captchaImageId: imageId,
+              captchaError: errorText,
+            })
+          }
+
+          // Generic validation error from Kratos - redirect back with new flow
+          logger.debug("Kratos validation error (non-captcha), redirecting to new registration flow")
+          return res.redirect(303, "/registration")
         }
       }
 

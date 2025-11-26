@@ -27,7 +27,6 @@
       const form = document.querySelector('form[method="post"], form[method="POST"]');
 
       if (!form) {
-        console.warn('Registration form not found');
         return;
       }
 
@@ -42,7 +41,6 @@
 
         // Check if captcha fields exist
         if (!captchaAnswer || !captchaToken) {
-          console.warn('Captcha fields not found, allowing submission');
           return;
         }
 
@@ -111,7 +109,6 @@
           }
 
         } catch (error) {
-          console.error('Captcha validation error:', error);
           captchaError.textContent = 'Failed to validate captcha. Please try again.';
           captchaError.style.display = 'block';
           isSubmitting = false;

@@ -16,7 +16,14 @@
 }
 
 .captcha-label {
-  font-family: var(--ory-theme-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-family: var(
+    --ory-theme-font-family,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif
+  );
   font-size: var(--ory-theme-font-size-body, 0.875rem);
   font-weight: var(--ory-theme-font-weight-regular, 400);
   line-height: var(--ory-theme-line-height-body, 1.5rem);
@@ -59,8 +66,8 @@
   height: 48px;
   font-weight: 600;
   font-style: normal;
-  font-size: 1.5rem;
-  line-height: 1;
+  font-size: 1rem;
+  line-height: 1.75rem;
   box-sizing: border-box;
   font-family: var(--ory-theme-font-family);
   text-decoration: none;
@@ -68,7 +75,7 @@
   background: var(--ory-theme-accent-def);
   padding: 0;
   border: none;
-  border-radius: .25rem;
+  border-radius: 0.25rem;
   text-align: center;
   cursor: pointer;
   display: flex;
@@ -78,17 +85,18 @@
 }
 
 .captcha-reload-button:hover {
-  background: var(--ory-theme-accent-emphasis);
-  transform: scale(1.05);
+  background-color: var(--ory-theme-accent-muted);
 }
-
-.captcha-reload-button:active {
-  transform: scale(0.95);
-}
-
 
 .captcha-fallback {
-  font-family: var(--ory-theme-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-family: var(
+    --ory-theme-font-family,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif
+  );
   font-size: 1.25rem;
   font-weight: var(--ory-theme-font-weight-medium, 500);
   color: var(--ory-theme-foreground-def, #171717);
@@ -101,11 +109,17 @@
 }
 
 .captcha-input {
-  margin-top: 1rem;
   width: 100%;
   font-size: 1rem;
   line-height: 1.75rem;
-  font-family: var(--ory-theme-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-family: var(
+    --ory-theme-font-family,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif
+  );
   font-weight: var(--ory-theme-font-weight-regular, 400);
   color: var(--ory-theme-foreground-def, #171717);
   background-color: var(--ory-theme-background-canvas, #fcfcfc);
@@ -117,10 +131,10 @@
   display: inline-flex;
   color: var(--ory-theme-input-text);
   border: 1px solid var(--ory-theme-border-def);
-  border-radius: .25rem;
-  padding: .75rem 1.5rem;
+  border-radius: 0.25rem;
+  padding: 0.75rem 1.5rem;
   background: var(--ory-theme-input-background);
-  width: 100%;
+  margin-bottom: 2rem;
 }
 
 .captcha-input:hover {
@@ -142,7 +156,14 @@
 }
 
 .captcha-help {
-  font-family: var(--ory-theme-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-family: var(
+    --ory-theme-font-family,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif
+  );
   font-size: var(--ory-theme-font-size-small, 0.75rem);
   line-height: var(--ory-theme-line-height-small, 1.25rem);
   color: var(--ory-theme-foreground-muted, #737373);
@@ -150,7 +171,14 @@
 }
 
 .captcha-error {
-  font-family: var(--ory-theme-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-family: var(
+    --ory-theme-font-family,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif
+  );
   font-size: var(--ory-theme-font-size-small, 0.75rem);
   line-height: var(--ory-theme-line-height-small, 1.25rem);
   font-weight: var(--ory-theme-font-weight-medium, 500);
@@ -171,37 +199,14 @@
   line-height: 1;
 }
 
-@media (max-width: 48em) {
-  .captcha-container {
-    padding: 0.75rem;
-    margin-top: 0.75rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .captcha-input {
-    max-width: 100%;
-  }
-
-  .captcha-image-wrapper {
-    gap: 0.5rem;
-  }
-
-  .captcha-reload-button {
-    width: 40px;
-    height: 40px;
-    font-size: 1.25rem;
-  }
-}
-
-/* Responsive spacing adjustments */
-@media (max-width: 24.375em) {
-  .captcha-container {
-    padding: 0.5rem;
-  }
-
-  .captcha-box {
-    gap: 0.5rem;
-  }
+.captcha-label {
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1rem;
+  line-height: 1.75rem;
+  font-family: var(--ory-theme-font-family);
+  text-decoration: none;
+  color: var(--ory-theme-foreground-def);
 }
 
 /*
@@ -226,8 +231,6 @@
     border-color: var(--ory-theme-border-def, #3f3f46);
     background-color: var(--ory-theme-background-canvas, #09090b);
   }
-
-
 
   .captcha-fallback {
     background-color: var(--ory-theme-background-canvas, #09090b);

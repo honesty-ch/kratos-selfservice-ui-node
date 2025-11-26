@@ -1,7 +1,6 @@
 {{#if captchaQuestion}}
 <!-- Captcha fields template - will be injected into form via JavaScript -->
 <div id="captcha-template" style="display: none;">
-  <div class="captcha-container">
     <div class="captcha-box">
       <div class="captcha-image-wrapper">
         <div class="captcha-image-container">
@@ -26,6 +25,7 @@
           &#x21bb;
         </button>
       </div>
+      <label for="captcha_answer" class="captcha_label">Captcha</label>
       <input
         type="text"
         id="captcha_answer"
@@ -40,12 +40,10 @@
       />
       <input type="hidden" name="captcha_token" value="{{captchaToken}}" />
       </div>
-
       {{#if captchaError}}
       <p id="captcha-error" class="captcha-error">{{captchaError}}</p>
       {{/if}}
     </div>
-  </div>
 </div>
 
 <script type="text/javascript">
@@ -55,15 +53,10 @@
       // Find the Kratos form
       const form = document.querySelector('form[data-testid="registration-flow-form"], form[method="POST"]');
 
-      if (!form) {
-        console.error('Could not find registration form');
-        return;
-      }
 
       // CRITICAL 1: Override the form action to point to our Express server
       // Ory Elements sets the form action to Kratos API, but we need it to go through our server first
       const originalAction = form.getAttribute('action');
-      console.log('Original form action (Kratos):', originalAction);
 
       // Extract flow ID from the original Kratos action URL
       const flowMatch = originalAction.match(/[?&]flow=([^&]+)/);
@@ -73,7 +66,6 @@
       const newAction = flowId ? `/registration?flow=${flowId}` : '/registration';
       form.setAttribute('action', newAction);
       form.setAttribute('method', 'POST');
-      console.log('Updated form action to:', form.getAttribute('action'));
 
       // CRITICAL 2: Move captcha fields INSIDE the form
       const captchaTemplate = document.getElementById('captcha-template');
@@ -93,8 +85,6 @@
           form.appendChild(captchaDiv);
         }
 
-        console.log('Captcha fields injected into form');
-
         // Remove the template
         captchaTemplate.remove();
 
@@ -102,7 +92,6 @@
         const reloadButton = document.getElementById('captcha-reload');
         if (reloadButton) {
           reloadButton.addEventListener('click', function() {
-            console.log('Reloading page to get new CAPTCHA');
             window.location.reload();
           });
         }
@@ -117,7 +106,6 @@
           });
         }
       } else {
-        console.error('Captcha template not found');
       }
     });
   })();

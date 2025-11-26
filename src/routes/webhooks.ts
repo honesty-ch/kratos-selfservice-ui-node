@@ -17,16 +17,11 @@ export const registerWebhooksRoute: RouteRegistrator = (app) => {
       headers: req.headers,
     })
 
-    console.log("Full webhook payload:", JSON.stringify(req.body.flow?.transient_payload, null, 2))
 
     // Access captcha information from transient_payload
     const transientPayload = req.body.flow?.transient_payload
 
     if (transientPayload) {
-      console.log("Captcha answer:", transientPayload.captcha_answer)
-      console.log("Captcha token:", transientPayload.captcha_token)
-      console.log("Captcha validated:", transientPayload.captcha_validated)
-      console.log("Captcha validated at:", transientPayload.captcha_validated_at)
 
       // Re-validate the captcha in the webhook
       if (transientPayload.captcha_token) {
@@ -80,14 +75,11 @@ export const registerWebhooksRoute: RouteRegistrator = (app) => {
       }
     }
 
-    // Access identity traits (email, etc.)
-    /*const traits = req.body.identity?.traits
-    if (traits) {
-      console.log("User traits:", traits)
-    }*/
-
     // Captcha is valid - allow registration to proceed
     // Return empty response for success (Kratos doesn't need a body for 200 OK)
-    res.status(200).send()
+    res.status(200).send({
+      success: true,
+      message: "Before registration webhook received and captcha validated",
+    })
   })
 }
