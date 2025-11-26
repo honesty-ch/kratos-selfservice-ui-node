@@ -3,17 +3,19 @@
 <div id="captcha-template" style="display: none;">
   <div class="captcha-container">
     <div class="captcha-box">
-      <div class="captcha-image-container">
-        {{#if captchaImageId}}
-        <img
-          src="/captcha/image/{{captchaImageId}}"
-          alt="CAPTCHA challenge"
-          class="captcha-image"
-          id="captcha-image"
-        />
-        {{else}}
-        <p class="captcha-fallback">What is {{captchaQuestion}}?</p>
-        {{/if}}
+      <div class="captcha-image-wrapper">
+        <div class="captcha-image-container">
+          {{#if captchaImageId}}
+          <img
+            src="/captcha/image/{{captchaImageId}}"
+            alt="CAPTCHA challenge"
+            class="captcha-image"
+            id="captcha-image"
+          />
+          {{else}}
+          <p class="captcha-fallback">What is {{captchaQuestion}}?</p>
+          {{/if}}
+        </div>
         <button
           type="button"
           class="captcha-reload-button"
@@ -23,6 +25,7 @@
         >
           &#x21bb;
         </button>
+      </div>
       <input
         type="text"
         id="captcha_answer"
