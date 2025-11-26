@@ -35,14 +35,14 @@ export const createWelcomeRoute: RouteCreator =
         CardGradient({
           heading: "Login",
           content:
-            "Jump start your project and complete the quickstart tutorial to get a broader overview of Ory Network.",
+            "",
           action: "/login",
           //target: "_blank",
         }),
         CardGradient({
           heading: "Subscribe",
           content:
-            "Jump start your project and complete the quickstart tutorial to get a broader overview of Ory Network.",
+            "",
           action: "/registration",
           //target: "_blank",
         }),
@@ -59,14 +59,14 @@ export const createWelcomeRoute: RouteCreator =
           CardGradient({
             heading: "Logout",
             content:
-              "Jump start your project and complete the quickstart tutorial to get a broader overview of Ory Network.",
+              "",
             action: logoutUrl,
             //target: "_blank",
           }),
           CardGradient({
             heading: "Settings",
             content:
-              "Jump start your project and complete the quickstart tutorial to get a broader overview of Ory Network.",
+              "",
             action: "/settings",
             //target: "_blank",
           }),
@@ -77,14 +77,14 @@ export const createWelcomeRoute: RouteCreator =
           CardGradient({
             heading: "Logout",
             content:
-              "Jump start your project and complete the quickstart tutorial to get a broader overview of Ory Network.",
+              "",
             action: logoutUrl,
             //target: "_blank",
           }),
           CardGradient({
             heading: "Verify",
             content:
-              "Jump start your project and complete the quickstart tutorial to get a broader overview of Ory Network.",
+              "",
             action: "/verification",
             //target: "_blank",
           }),
